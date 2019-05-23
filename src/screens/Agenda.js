@@ -24,46 +24,57 @@ export default class Agenda extends Component {
       {
         id: Math.random(),
         description: "Concluir o curso React Native",
-        estimateAt: new Date((new Date).setMonth((new Date).getMonth() + 1)),
+        estimateAt: new Date((new Date()).setMonth((new Date()).getMonth() + 1)),
         doneAt: null
       },
       {
         id: Math.random(),
         description: "Construir um app poquera",
-        estimateAt: new Date((new Date).setMonth((new Date).getMonth() + 3)),
+        estimateAt: new Date((new Date()).setMonth((new Date()).getMonth() + 3)),
         doneAt: null
       },
       {
         id: Math.random(),
         description: "Ficar rico",
-        estimateAt: new Date((new Date).setMonth((new Date).getMonth() + 6)),
+        estimateAt: new Date((new Date()).setMonth((new Date()).getMonth() + 6)),
         doneAt: null
       },
       {
         id: Math.random(),
         description: "Construir outro app poquera",
-        estimateAt: new Date((new Date).setMonth((new Date).getMonth() + 9)),
+        estimateAt: new Date((new Date()).setMonth((new Date()).getMonth() + 9)),
         doneAt: null
       },
       {
         id: Math.random(),
         description: "Ficar mais rico ainda",
-        estimateAt: new Date((new Date).setMonth((new Date).getMonth() + 12)),
+        estimateAt: new Date((new Date()).setMonth((new Date()).getMonth() + 12)),
         doneAt: null
       },
       {
         id: Math.random(),
         description: "Comprar uma casa beira rio",
-        estimateAt: new Date((new Date).setMonth((new Date).getMonth() + 15)),
+        estimateAt: new Date((new Date()).setMonth((new Date()).getMonth() + 15)),
         doneAt: null
       },
       {
         id: Math.random(),
         description: "Se aponsentar!",
-        estimateAt: new Date((new Date).setMonth((new Date).getMonth() + 15)),
+        estimateAt: new Date((new Date()).setMonth((new Date()).getMonth() + 15)),
         doneAt: null
       },
-    ]
+    ],
+  }
+
+  toggleTask = (id) => {
+    const tasks = this.state.tasks.map(task => {
+      if (task.id === id) {
+        task = {...task}
+        task.doneAt = task.doneAt ? null : new Date()
+      }
+      return task
+    })
+    this.setState({ tasks })
   }
 
   render() {
@@ -81,7 +92,7 @@ export default class Agenda extends Component {
         <View style={styles.taskContainer}>
           <FlatList data={this.state.tasks}
             keyExtractor={item => String(item.id)}
-            renderItem={({ item }) => <Task {...item} />} />
+            renderItem={({ item }) => <Task {...item} toggleTask={this.toggleTask} />} />
         </View>
       </View>
     )
