@@ -35,7 +35,7 @@ export default props => {
         <Text style={[styles.description, descStyle]}>
           {props.description}
         </Text>
-        <Text style={styles.date}>{moment(props.estimateAt).locale("pt-br").format("ddd, D [de] MMM")}</Text>
+        <Text style={styles.date}>{moment(props.estimateAt).locale("pt-br").format("ddd, D [de] MMMM [de] YYYY")}</Text>
       </View>
     </View>
   )

@@ -78,7 +78,7 @@ export default class Agenda extends Component {
     const tasks = [...this.state.tasks]
     tasks.push({
       id: Math.random(),
-      desc: task.desc,
+      description: task.desc,
       estimateAt: task.date,
       doneAt: null,
     })
@@ -129,7 +129,7 @@ export default class Agenda extends Component {
     return (
       <View style={styles.container}>
         <AddTask isVisible={this.state.showAddTask}
-          onShave={this.addTask}
+          onSave={this.addTask}
           onCancel={() => this.setState({ showAddTask: false })} />
         <ImageBackground source={todayImage}
           style={styles.background}>
