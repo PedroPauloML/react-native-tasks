@@ -85,6 +85,14 @@ export default class Agenda extends Component {
     this.setState({ tasks, showAddTask: false }, this.filterTasks)
   }
 
+  deleteTask = id => {
+    const tasks = this.state.tasks.filter(task => task.id !== id)
+    setTimeout(
+      () => { this.setState({ tasks }, this.filterTasks) },
+      200
+    )
+  }
+
   filterTasks = (sleep = false, taskIdToSleep = null) => {
     let visibleTasks = null
     if (this.state.showDoneTasks) {
@@ -106,7 +114,7 @@ export default class Agenda extends Component {
       , this.filterTasks)
   }
 
-  toggleTask = (id) => {
+  onToggleTask = (id) => {
     const tasks = this.state.tasks.map(task => {
       if (task.id === id) {
         task = {...task}
@@ -149,7 +157,9 @@ export default class Agenda extends Component {
         <View style={styles.taskContainer}>
           <FlatList data={this.state.visibleTasks}
             keyExtractor={item => String(item.id)}
-            renderItem={({ item }) => <Task {...item} toggleTask={this.toggleTask} />} />
+            renderItem={({ item }) =>
+              <Task {...item} onToggleTask={this.onToggleTask}
+                onDelete={this.deleteTask} />} />
         </View>
         <ActionButton buttonColor={commonStyles.colors.today}
           onPress={() => { this.setState({ showAddTask: true }) }} />
