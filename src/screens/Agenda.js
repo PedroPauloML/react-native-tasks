@@ -140,8 +140,8 @@ export default class Agenda extends Component {
 
   loadTasks = async (sleep = false, taskIdToSleep = null) => {
     try {
-      const maxDate = moment().format("YYYY-MM-DD 23:59")
-      // const maxDate = moment().format("2019-12-31 23:59")
+      // const maxDate = moment().format("YYYY-MM-DD 23:59")
+      const maxDate = moment().format("2019-12-31 23:59")
       const res = await axios.get(`${server}/tasks?date=${maxDate}`)
       this.setState({ tasks: res.data }, () =>
         this.filterTasks(sleep, taskIdToSleep))
