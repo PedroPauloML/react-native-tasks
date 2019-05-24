@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert
 } from "react-native"
+import AsyncStorage from '@react-native-community/async-storage'
 import commonStyles from "../commonStyles"
 import backgroundImage from "../../assets/imgs/login.jpg"
 import AuthInput from "../components/AuthInput"
@@ -30,6 +31,7 @@ export default class Auth extends Component {
       })
 
       axios.defaults.headers.common["Authorization"] = `bearer ${res.data.token}`
+      AsyncStorage.setItem("userData", JSON.stringify(res.data))
       this.props.navigation.navigate("Home", res.data)
     } catch (err) {
       if (err.response.status == 401 || err.response.status == 400) {
