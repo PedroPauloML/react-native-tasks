@@ -10,6 +10,8 @@ import {
 import commonStyles from "../commonStyles"
 import backgroundImage from "../../assets/imgs/login.jpg"
 import AuthInput from "../components/AuthInput"
+import axios from "axios"
+import { server, showError } from "../common"
 
 export default class Auth extends Component {
   state = {
@@ -20,11 +22,34 @@ export default class Auth extends Component {
     confirmPassword: "",
   }
 
-  signinOrSignup = () => {
+  signinOrSignup = async () => {
     if (this.state.stageNew) {
-      Alert.alert("Sucesso!", "Criar conta")
+      try {
+        await axios.post(`${server}/signup`, {
+          name: this.state.name,
+          email: this.state.email,
+          password: this.state.password,
+          confirmPassword: this.state.confirmPassword,
+        })
+
+        Alert.alert("Sucesso!", "Usuário cadastrado :)")
+        this.setState({ stageNew: false })
+      } catch (err) {
+        showError(err)
+      }
     } else {
-      Alert.alert("Sucesso!", "Logar")
+      try {
+        const res = await axios.post(`${server}/signin`, {
+          email: this.state.email,
+          password: this.state.password,
+        })
+
+        axios.defaults.headers.common["Authorization"] = `bearer ${res.data.token}`
+        this.props.navigation.navigate("Home")
+      } catch (err) {
+        Alert.alert("Erro", `Falha no login! ${err}`)
+        // showError(err)
+      }
     }
   }
 
