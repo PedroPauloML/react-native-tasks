@@ -30,7 +30,7 @@ export default class Auth extends Component {
       })
 
       axios.defaults.headers.common["Authorization"] = `bearer ${res.data.token}`
-      this.props.navigation.navigate("Home")
+      this.props.navigation.navigate("Home", res.data)
     } catch (err) {
       if (err.response.status == 401 || err.response.status == 400) {
         Alert.alert("E-mail e/ou senha incorreto", "Verifique se os dados informados estão corretos")
