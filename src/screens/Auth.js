@@ -1,6 +1,7 @@
 import React, { Component } from "react"
 import { 
   StyleSheet,
+  View,
   Text,
   TextInput,
   ImageBackground,
@@ -35,7 +36,7 @@ export default class Auth extends Component {
         <View style={styles.formContainer}>
           <Text style={styles.subtitle}>
             {this.state.stageNew ?
-              "Crie a sua conta" : "Inform seus dados"}
+              "Crie a sua conta" : "Informe seus dados"}
           </Text>
           {this.state.stageNew &&
             <TextInput placeholder="Nome" style={styles.input}
@@ -54,17 +55,15 @@ export default class Auth extends Component {
             onChangeText={confirmPassword => this.setState({ confirmPassword })} />}
           <TouchableOpacity onPress={this.signinOrSignup}>
             <View style={styles.button}>
-              <Text sttyle={styles.buttonText}>
+              <Text style={styles.buttonText}>
                 {this.state.stageNew ? "Registrar" : "Entrar"}</Text>
             </View>
           </TouchableOpacity>
         </View>
         <TouchableOpacity style={{ padding: 10 }}
           onPress={() => { this.setState({ stageNew: !this.state.stageNew }) }}>
-          <View style={styles.button}>
-            <Text sttyle={styles.buttonText}>
-              {this.state.stageNew ? "Já possu conta?" : "Ainda não possui conta?"}</Text>
-          </View>
+          <Text style={styles.buttonText}>
+            {this.state.stageNew ? "Já possu conta?" : "Ainda não possui conta?"}</Text>
         </TouchableOpacity>
       </ImageBackground>
     )
@@ -73,24 +72,40 @@ export default class Auth extends Component {
 
 const styles = StyleSheet.create({
   background: {
-
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
-
-  },
-  formContainer: {
-
+    fontFamily: commonStyles.fontFamily,
+    color: "#fff",
+    fontSize: 70,
+    marginBottom: 10,
   },
   subtitle: {
-
+    fontFamily: commonStyles.fontFamily,
+    color: "#fff",
+    fontSize: 20,
+  },
+  formContainer: {
+    backgroundColor: "rgba(0,0,0,0.8)",
+    padding: 20,
+    width: "90%",
   },
   input: {
-
+    marginTop: 10,
+    backgroundColor: "#fff",
   },
   button: {
-
+    backgroundColor: "#080",
+    marginTop: 10,
+    padding: 10,
+    alignItems: "center",
   },
   buttonText: {
-
+    fontFamily: commonStyles.fontFamily,
+    color: "#fff",
+    fontSize: 20,
   },
 })
