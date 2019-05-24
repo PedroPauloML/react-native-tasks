@@ -6,10 +6,9 @@ import {
   ImageBackground,
   FlatList,
   TouchableOpacity,
-  Platform,
-  // AsyncStorage
+  Platform
 } from "react-native"
-import AsyncStorage from '@react-native-community/async-storage'
+// import AsyncStorage from '@react-native-community/async-storage'
 import moment from "moment"
 import "moment/locale/pt-br"
 import todayImage from "../../assets/imgs/today.jpg"
@@ -18,6 +17,8 @@ import Task from "../components/Task"
 import Icon from "react-native-vector-icons/FontAwesome"
 import ActionButton from "react-native-action-button"
 import AddTask from "./AddTask"
+import axios from "axios"
+import { server, showError } from "../common"
 
 export default class Agenda extends Component {
   state = {
@@ -76,23 +77,26 @@ export default class Agenda extends Component {
     showAddTask: false,
   }
 
-  addTask = task => {
-    const tasks = [...this.state.tasks]
-    tasks.push({
-      id: Math.random(),
-      description: task.desc,
-      estimateAt: task.date,
-      doneAt: null,
-    })
-    this.setState({ tasks, showAddTask: false }, this.filterTasks)
+  addTask = async task => {
+    try {
+      await axios.post(`${server}/tasks`, {
+        desc: task.desc,
+        estimateAt: task.date,
+      })
+
+      this.setState({ showAddTask: false }, this.loadTasks)
+    } catch (err) {
+      showError(err)
+    }
   }
 
-  deleteTask = id => {
-    const tasks = this.state.tasks.filter(task => task.id !== id)
-    setTimeout(
-      () => { this.setState({ tasks }, this.filterTasks) },
-      200
-    )
+  deleteTask = async id => {
+    try {
+      await axios.delete(`${server}/tasks/${id}`)
+      await this.loadTasks(true, id)
+    } catch (err) {
+      showError(err)
+    }
   }
 
   filterTasks = (sleep = false, taskIdToSleep = null) => {
@@ -104,13 +108,12 @@ export default class Agenda extends Component {
         || (sleep && taskIdToSleep !== null && task.id == taskIdToSleep)
       visibleTasks = this.state.tasks.filter(pending)
     }
-    this.setState({ visibleTasks }, () => {
-      if (sleep && taskIdToSleep !== null)  {
-        setTimeout(this.filterTasks, 200)
-      } else {
-        AsyncStorage.setItem("tasks", JSON.stringify(this.state.tasks))
-      }
-    })
+    if (sleep && taskIdToSleep !== null)  {
+      console.debug("sleeping...")
+      console.debug(visibleTasks)
+      setTimeout(this.filterTasks, 200)
+    }
+    this.setState({ visibleTasks })
   }
 
   toggleFilter = () => {
@@ -118,25 +121,33 @@ export default class Agenda extends Component {
       , this.filterTasks)
   }
 
-  onToggleTask = (id) => {
-    const tasks = this.state.tasks.map(task => {
-      if (task.id === id) {
-        task = {...task}
-        task.doneAt = task.doneAt ? null : new Date()
+  onToggleTask = async id => {
+    try {
+      await axios.put(`${server}/tasks/${id}/toggle`)
+      if (this.state.showDoneTasks) {
+        await this.loadTasks()
+      } else {
+        await this.loadTasks(true, id)
       }
-      return task
-    })
-    callback = () => {
-      this.state.showDoneTasks ?
-        this.filterTasks() : this.filterTasks(true, id)
+    } catch (err) {
+      showError(err)
     }
-    this.setState({ tasks }, callback)
   }
 
   componentDidMount = async () => {
-    const data = await AsyncStorage.getItem("tasks")
-    const tasks = JSON.parse(data) || []
-    this.setState({ tasks }, this.filterTasks)
+    this.loadTasks()
+  }
+
+  loadTasks = async (sleep = false, taskIdToSleep = null) => {
+    try {
+      const maxDate = moment().format("YYYY-MM-DD 23:59")
+      // const maxDate = moment().format("2019-12-31 23:59")
+      const res = await axios.get(`${server}/tasks?date=${maxDate}`)
+      this.setState({ tasks: res.data }, () =>
+        this.filterTasks(sleep, taskIdToSleep))
+    } catch (err) {
+      showError(err)
+    }
   }
 
   render() {

@@ -32,8 +32,11 @@ export default class Auth extends Component {
       axios.defaults.headers.common["Authorization"] = `bearer ${res.data.token}`
       this.props.navigation.navigate("Home")
     } catch (err) {
-      Alert.alert("Erro", `Falha no login! [${err}]`)
-      // showError(err)
+      if (err.response.status == 401) {
+        Alert.alert("E-mail e/ou senha incorreto", "Verifique se os dados informados estão corretos")
+      } else {
+        showError(err)
+      }
     }
   }
 
